@@ -50,85 +50,83 @@
 					</p>
 				</section>
 
-				<section id="motivation">
-					<!--motivation-->
-					<h2>Serialization Evolution</h2>
+				<section data-background="img/front-page-blur.png" id="content">
+					<h2>What to expect</h2>
 					<ol>
-						<li>Structuring Data in Kafka with Apache Avro&trade;</li>
-						<li>Or here</li>
+						<li>Evolution of Serialization</li>
+						<li>Apache Avro&trade;</li>
+						<li>Schema Registry</li>
+						<li>REST API</li>
+						<li>Producer</li>
+						<li>Consumer</li>
 					</ol>
 				</section>
 
-				<section data-background="img/front-page-blur.png" id="motivation">
-					<!--motivation-->
-					<h2>Eventually, the schema changes</h2>
-					<aside class="notes">
-						<ul>
-							<li>Code refactoring</li>
-							<li>Schema changes happen frequently, and often without warning.</li>
-							<li>Or here</li>
-							<li>Or here</li>
-						</ul>
-						 Someone refactors the code generating the JSON and moves fields around, perhaps renaming few fields.
-						 The DBA added new columns to a MySQL table and this reflects in the CSVs dumped from the table.
-						 Now all those applications and scripts must be modified to handle both file formats.
-						 And since schema changes happen frequently, and often without warning, this results in both ugly and unmaintainable code, and in grumpy developers who are tired of having to modify their scripts again and again.
-					 </aside>
+				<section id="motivation">
+					<h2>Benefits of Schema</h2>
+					<section>
+						<h2>The Evolution of Serialization</h2>
+						<ol>
+							<li>Built-in Serialization</li>
+							<li>JSON/XML</li>
+							<li>Binary</li>
+							<li>Schema</li>
+						</ol>
+						<aside class="notes">
+							<ul>
+								<li>Programming language’s native frameworks</li>
+								<li>Not locked into particular PL, language-agnostic</li>
+								<li>reduce verbosity, increase parsing performance, differentiate between int and longs</li>
+								<li>Separation of Schema and Data Persistence -> cross-language, no more data with inconsistent type. benefit for static typed PLs: save even more space by omitting field names</li>
+							</ul>
+						 </aside>
+					</section>
+
+					<section>
+						<h2>Eventually, the schema changes</h2>
+						<aside class="notes">
+							<ul>
+								<li>Code refactoring</li>
+								<li>Schema changes happen frequently, and often without warning.</li>
+								<li>Results in both ugly and unmaintainable code, and in grumpy developers who are tired of having to modify their scripts again and again.</li>
+								<li>Or here</li>
+							</ul>
+							 Someone refactors the code generating the JSON and moves fields around, perhaps renaming few fields.
+							 The DBA added new columns to a MySQL table and this reflects in the CSVs dumped from the table.
+							 Now all those applications and scripts must be modified to handle both file formats.
+
+						 </aside>
+					</section>
 				</section>
 
-				<section>
-					<h2>Pretty Code</h2>
-					<pre><code data-trim contenteditable>
-function linkify( selector ) {
-  if( supports3DTransforms ) {
-
-    var nodes = document.querySelectorAll( selector );
-
-    for( var i = 0, len = nodes.length; i &lt; len; i++ ) {
-      var node = nodes[i];
-
-      if( !node.className ) {
-        node.className += ' roll';
-      }
-    }
-  }
-}
-					</code></pre>
-					<p>Code syntax highlighting courtesy of <a href="http://softwaremaniacs.org/soft/highlight/en/description/">highlight.js</a>.</p>
+				<section id="avro">
+					<h2>Apache Avro&trade;</h2>
+					<section>
+						<h2>Structuring Data in Kafka with Apache Avro&trade;</h2>
+						<ol>
+							<li>item 1</li>
+							<li>item 2</li>
+							<li>item 3</li>
+						</ol>
+					</section>
 				</section>
 
-				<section>
-					<h2>Clever Quotes</h2>
-					<p>
-						These guys come in two forms, inline: <q cite="http://searchservervirtualization.techtarget.com/definition/Our-Favorite-Technology-Quotations">
-						&ldquo;The nice thing about standards is that there are so many to choose from&rdquo;</q> and block:
-					</p>
-					<blockquote cite="http://searchservervirtualization.techtarget.com/definition/Our-Favorite-Technology-Quotations">
-						&ldquo;For years there has been a theory that millions of monkeys typing at random on millions of typewriters would
-						reproduce the entire works of Shakespeare. The Internet has proven this theory to be untrue.&rdquo;
-					</blockquote>
+				<section id="schema-registry">
+					<h2>Schema Registry</h2>
 				</section>
 
-				<section>
-					<h2>Intergalactic Interconnections</h2>
-					<p>
-						You can link between slides internally,
-						<a href="#/2/3">like this</a>.
-					</p>
+				<section id="schema-api">
+					<h2>REST API</h2>
 				</section>
 
-				<section>
-					<h2>Speaker View</h2>
-					<p>There's a <a href="https://github.com/hakimel/reveal.js#speaker-notes">speaker view</a>. It includes a timer, preview of the upcoming slide as well as your speaker notes.</p>
-					<p>Press the <em>S</em> key to try it out.</p>
-
-					<aside class="notes">
-						Oh hey, these are some notes. They'll be hidden in your presentation, but you can see them if you open the speaker notes window (hit 's' on your keyboard).
-					</aside>
+				<section id="producer">
+					<h2>Producer</h2>
 				</section>
 
+				<section id="consumer">
+					<h2>Consumer</h2>
+				</section>
 			</div>
-
 		</div>
 
 		<script src="lib/js/head.min.js"></script>
