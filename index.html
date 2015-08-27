@@ -63,7 +63,6 @@
 				</section>
 
 				<section id="motivation">
-					<h2>Benefits of Schema</h2>
 					<section>
 						<h2>The Evolution of Serialization</h2>
 						<ol>
@@ -74,10 +73,16 @@
 						</ol>
 						<aside class="notes">
 							<ul>
-								<li>Programming language’s native frameworks</li>
-								<li>Not locked into particular PL, language-agnostic</li>
-								<li>reduce verbosity, increase parsing performance, differentiate between int and longs</li>
-								<li>Separation of Schema and Data Persistence -> cross-language, no more data with inconsistent type. benefit for static typed PLs: save even more space by omitting field names</li>
+								<li>Programming language’s native frameworks.</li>
+								<li>Language-agnostic, not locked into particular PL.</li>
+								<li>Reduces verbosity, increases parsing performance, differentiates between int and longs</li>
+								<li>Separation of Schema and Data Persistence
+									<ul>
+										<li>cross-language</li>
+										<li>no more data with inconsistent type; generate model for static typed PLs</li>
+										<li>save even more space by omitting field names</li>
+									</ul>
+								</li>
 							</ul>
 						 </aside>
 					</section>
@@ -86,28 +91,45 @@
 						<h2>Eventually, the schema changes</h2>
 						<aside class="notes">
 							<ul>
-								<li>Code refactoring</li>
+								<li>Code refactoring or DB schema changes</li>
+								<li>Results in both ugly and unmaintainable code</li>
+								<li>Developers who are tired of having to modify their scripts again and again.</li>
 								<li>Schema changes happen frequently, and often without warning.</li>
-								<li>Results in both ugly and unmaintainable code, and in grumpy developers who are tired of having to modify their scripts again and again.</li>
-								<li>Or here</li>
 							</ul>
-							 Someone refactors the code generating the JSON and moves fields around, perhaps renaming few fields.
-							 The DBA added new columns to a MySQL table and this reflects in the CSVs dumped from the table.
-							 Now all those applications and scripts must be modified to handle both file formats.
-
 						 </aside>
+					</section>
+
+					<section>
+						<h2>Schema Evolution</h2>
+						<ul>
+							<li>Backward compatibility</li>
+							<li>Forward compatibility</li>
+							<li>Full compatibility</li>
+						</ul>
 					</section>
 				</section>
 
 				<section id="avro">
-					<h2>Apache Avro&trade;</h2>
 					<section>
-						<h2>Structuring Data in Kafka with Apache Avro&trade;</h2>
-						<ol>
-							<li>item 1</li>
-							<li>item 2</li>
+						<h2>Structuring Data in Kafka</h2>
+						<ul>
+							<li>Apache Avro&trade;</li>
+							<li>Schema</li>
 							<li>item 3</li>
-						</ol>
+						</ul>
+					</section>
+
+					<section>
+						<h2>Schema Definition</h2>
+					</section>
+					<section>
+						<h2>Schema Evolution</h2>
+					</section>
+					<section>
+						<h2>Compability</h2>
+					</section>
+					<section>
+						<h2>Conflict Resolution</h2>
 					</section>
 				</section>
 
