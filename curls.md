@@ -19,7 +19,7 @@ curl -X GET -i -H "Content-Type: application/vnd.schemaregistry.v1+json" \
 
 #### Retrieve first schema version describing IPv4
 ``` bash
-curl -X GET -i -H "Content-Type: application/vnd.schemaregistry.v1+json" \
+curl -i -H "Content-Type: application/vnd.schemaregistry.v1+json" \
     http://127.0.0.1:8081/subjects/ip/versions/1
 ```
 

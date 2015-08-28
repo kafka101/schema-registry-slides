@@ -62,7 +62,7 @@
 					</ol>
 				</section>
 
-				<section id="motivation">
+				<section id="motivation" data-background="#FFB03B">
 					<section>
 						<h2>The Evolution of Serialization</h2>
 						<ol>
@@ -116,7 +116,7 @@
 					</section>
 				</section>
 
-				<section id="avro">
+				<section id="avro" data-background="#B64926">
 					<section>
 						<h2>Structuring Data in Kafka</h2>
 						<pre><code data-trim>
@@ -147,7 +147,7 @@ curl -X POST -i -H "Content-Type: application/vnd.schemaregistry.v1+json" \
 "string"
 {"type": "int"}
             </code></pre>
-						<span class="fragment fade-in">
+						<span class="fragment">
 						  <h4>Complex Types</h4>
 						  records, enums, arrays, maps, unions, fixed
 						  <pre><code data-trim>
@@ -224,22 +224,147 @@ public Click(String time, String ip, String page, String user, String origin) {
 					</section>
 				</section>
 
-				<section id="schema-registry">
-					<h2>Schema Registry</h2>
-					 <img width="50%" src="img/schema-registry.svg">
-				</section>
+				<section id="schema-registry" data-background="#8E2800">
+					<section>
+						<h1>Schema Registry</h1>
+					</section>
+					<section>
+						<h2>Overview</h2>
+						<img width="50%" src="img/schema-registry.svg">
+					</section>
 
-				<section id="schema-api">
-					<h2>REST API</h2>
-				</section>
+					<section id="schema-api">
+						<h2>REST API</h2>
+						<pre class="fragment"><code data-trim>
+curl -X POST -i -H "Content-Type: application/vnd.schemaregistry.v1+json" \
+	--data '{"schema":"{\"type\":\"fixed\", \"name\":\"IPv4\", \"size\":4}"}' \
+	http://127.0.0.1:8081/subjects/ip/versions
+						</code></pre>
+						<pre class="fragment"><code data-trim>
+curl -i -H "Content-Type: application/vnd.schemaregistry.v1+json" \
+	http://127.0.0.1:8081/subjects/ip/versions/1
+						</code></pre>
+						<pre class="fragment"><code data-trim>
+curl -X POST -i -H "Content-Type: application/vnd.schemaregistry.v1+json" \
+	--data '{"schema":"[ {\"type\":\"fixed\", \"name\":\"IPv4\", \"size\":4}, {\"type\":\"fixed\", \"name\":\"IPv6\", \"size\":16}]"}' \
+	http://127.0.0.1:8081/subjects/ip/versions
+						</code></pre>
+						<a class="fragment" href="http://docs.confluent.io/1.0/schema-registry/docs/api.html">API Reference</a>
+					</section>
 
-				<section id="producer">
-					<h2>Producer</h2>
-				</section>
+					<section id="producer">
+						<h2>Producer</h2>
+						<pre class="fragment"><code class="java" data-trim>
+public class Producer {
 
-				<section id="consumer">
-					<h2>Consumer</h2>
-				</section>
+...
+
+    public Producer(String topic, String broker, String registryUrl) throws JsonMappingException {
+        this.topic = topic;
+        this.producer = createProducer(broker, registryUrl);
+        this.translator = new AvroTranslator();
+    }
+
+    private KafkaProducer&lt;String, GenericRecord&gt; createProducer(String broker, String registryUrl) {
+        Properties config = new Properties();
+        config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, broker);
+        config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class.getName());
+        config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class.getName());
+        config.put(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, registryUrl);
+        return new KafkaProducer&lt;&gt;(config);
+    }
+...
+}
+						</code></pre>
+					</section>
+
+					<section>
+						<h2>send()</h2>
+						<pre><code class="java" data-trim>
+public class Producer {
+
+...
+
+	public RecordMetadata send(Click click) throws ExecutionException, InterruptedException {
+        GenericRecord genericRecord = translator.toAvro(click);
+        ProducerRecord&lt;String, GenericRecord&gt; record = new ProducerRecord&lt;&gt;(topic, click.ip, genericRecord);
+        return this.producer.send(record).get();
+    }
+...
+}
+						</code></pre>
+					</section>
+
+					<section>
+						<h2>AvroTranslator.java?</h2>
+					</section>
+
+					<section id="consumer">
+						<h2>Consumer</h2>
+						<pre class="fragment"><code class="java" data-trim>
+public class Consumer&lt;T&gt; {
+
+...
+    private Properties getConfiguration(String zookeeper, String schemaUrl, String groupId) {
+    	...
+        props.put("schema.registry.url", schemaUrl);
+        return props;
+    }
+...
+    public void run(int numThreads) {
+        Map&lt;String, Integer&gt; topicCountMap = new HashMap();
+        topicCountMap.put(topic, new Integer(numThreads));
+        KafkaAvroDecoder avroDecoder = new KafkaAvroDecoder(new VerifiableProperties(configuration));
+        Map&lt;String, List&lt;KafkaStream&lt;Object, Object&gt;&gt;&gt; consumerMap = consumerConnector.createMessageStreams(
+                topicCountMap, avroDecoder, avroDecoder);
+        List&lt;KafkaStream&lt;Object, Object&gt;&gt; streams = consumerMap.get(topic);
+
+        // create fixed size thread pool to launch all the threads
+        pool = Executors.newFixedThreadPool(numThreads);
+        // create consumer threads to handle the messages
+        int threadNumber = 0;
+
+        for (final KafkaStream stream : streams) {
+            String name = String.format("%s[%s]", consumer.getTopic(), threadNumber++);
+            Runnable runnable = new ConsumerThread(stream, name, consumer);
+            pool.submit(runnable);
+        }
+    }
+}
+						</code></pre>
+					</section>
+					<section>
+						<h2>ConsumerThread</h2>
+						<pre><code class="java" data-trim>
+public class ConsumerThread implements Runnable {
+...
+    @Override
+    public void run() {
+        Thread.currentThread().setName(name);
+        logger.info("Started consumer thread {}", name);
+        ConsumerIterator&lt;String, Object&gt; it = messageStream.iterator();
+        while (it.hasNext()) {
+            relayMessage(it.next());
+        }
+        logger.info("Shutting down consumer thread {}", name);
+    }
+
+    private void relayMessage(MessageAndMetadata&lt;String, Object&gt; kafkaMessage) {
+        logger.debug("Received message with key '{}' and offset '{}' on partition '{}' for topic '{}'",
+                kafkaMessage.key(), kafkaMessage.offset(), kafkaMessage.partition(), kafkaMessage.topic());
+        GenericContainer record = (GenericContainer) kafkaMessage.message();
+        Click click = translator.toObject(record, Click.class);
+        consumer.consume(click);
+    }
+}
+						</code></pre>
+					</section>
+					<section>
+						Sample Code: <a href="https://github.com/kafka101/clickstream-schema">github.com/kafka101/clickstream-schema</a><br>
+						Chef &amp; Vagrantfile: <a href="https://supermarket.chef.io/cookbooks/confluent-cookbook">supermarket.chef.io/cookbooks/confluent-cookbook</a><br>
+						Kafka intro: <a href="https://github.com/kafka101/java-news-feed">github.com/kafka101/java-news-feed</a><br>
+					</section>
+					</section>
 
 				<section id="end">
 					<h2>Questions?</h2>
@@ -259,6 +384,11 @@ public Click(String time, String ip, String page, String user, String origin) {
 				progress: true,
 				history: true,
 				center: true,
+				width: 1280,
+        		height: 800,
+        		margin: 0.1,
+        		minScale: 1,
+        		maxScale: 1.2,
 
 				transition: 'slide', // none/fade/slide/convex/concave/zoom
 
